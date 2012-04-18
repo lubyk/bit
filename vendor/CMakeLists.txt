@@ -1,14 +1,31 @@
-
-# ----------------------------------------------------------------------------------
-#  [lubyk]
-# ----------------------------------------------------------------------------------
+# --------------------------------------------------------------
+#  bit_vendor
+#  
+#  expects:
+#    MODULE_NAME defined in the CMakeLists for the module
+#
+#  provides:
+#    bit/vendor.so
+# --------------------------------------------------------------
+set(target "${MODULE_NAME}_vendor")
 
 include_directories(src)
-add_definitions(-DLUA_NUMBER_DOUBLE)
+file(GLOB CORE_SOURCES *.c)
 
-file(GLOB SUB_MODULE_SOURCES *.c)
-build_sub_module("vendor" ${SUB_MODULE_SOURCES})
+add_library(${target} MODULE ${CORE_SOURCES})
+set_target_properties(${target}
+  PROPERTIES OUTPUT_NAME vendor
+  LINK_FLAGS ${PLAT_OBJ_FLAGS}
+  PREFIX ""
+  SUFFIX ".so"
+)  
 
-# ----------------------------------------------------------------------------------
-#  [/lubyk]
-# ----------------------------------------------------------------------------------
+add_dependencies(${MODULE_NAME} ${target})
+
+# --------------------------------------------------------------
+#  install                                     
+# --------------------------------------------------------------
+install(TARGETS ${target}
+  DESTINATION lib/lubyk/${MODULE_NAME}
+)
+
