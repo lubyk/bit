@@ -6,7 +6,6 @@
 #    bit/vendor.so
 # --------------------------------------------------------------
 set(MODULE_NAME bit)
-set(target ${MODULE_NAME})
 
 # --------------------------------------------------------------
 #  module
@@ -14,15 +13,31 @@ set(target ${MODULE_NAME})
 add_custom_target(${MODULE_NAME} true)
 
 # --------------------------------------------------------------
-#  vendor
+#  bit_vendor
 # --------------------------------------------------------------
-add_subdirectory(vendor)
+set(target "${MODULE_NAME}_vendor")
+
+add_library(${target} MODULE vendor/bit.c)
+set_target_properties(${target}
+  PROPERTIES OUTPUT_NAME vendor
+  LINK_FLAGS ${PLAT_OBJ_FLAGS}
+  PREFIX ""
+  SUFFIX ".so"
+)  
+add_dependencies(${MODULE_NAME} ${target})
 
 # --------------------------------------------------------------
-#  install                                     
+#  install bit/vendor.so
 # --------------------------------------------------------------
-install(DIRECTORY lubyk
-  DESTINATION lib
-)                                  
+install(TARGETS ${target}
+  DESTINATION ${LUBYK_LIB}/lib/${MODULE_NAME}
+)
 
+
+# --------------------------------------------------------------
+#  install bit.lua
+# --------------------------------------------------------------
+install(DIRECTORY lib
+  DESTINATION ${LUBYK_LIB}
+)
 
